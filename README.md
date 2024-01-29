@@ -1,56 +1,71 @@
-![Anurag's GitHub stats](https://github-readme-stats.vercel.app/api?username=kenzok8&show_icons=true&theme=radical)
-<div align="center">
-<h1 align="center"smmall</h1>
-<img src="https://img.shields.io/github/issues/kenzok8/small?color=green">
-<img src="https://img.shields.io/github/stars/kenzok8/small?color=yellow">
-<img src="https://img.shields.io/github/forks/kenzok8/small?color=orange">
-<img src="https://img.shields.io/github/languages/code-size/kenzok8/small?color=blueviolet">
-</div>
+## passwall软件包自动云编译
+#### 自动更新依赖：[![Workflow Status](https://github.com/zijieKwok/JacKwok-passwall/actions/workflows/Auto.update.packages.yml/badge.svg)](https://github.com/zijieKwok/JacKwok-passwall/actions)      自动编译插件及依赖：[![Workflow Status](https://github.com/zijieKwok/JacKwok-passwall/actions/workflows/Auto.compile.ipk.yml/badge.svg)](https://github.com/zijieKwok/JacKwok-passwall/actions)
+<summary>预览截图</summary>
+<p>
 
-<img src="https://v2.jinrishici.com/one.svg?font-size=24&spacing=2&color=Black">
+![image](https://raw.githubusercontent.com/zijieKwok/JacKwok-passwall/master/img/openwrt.png)
+  
+![image](https://raw.githubusercontent.com/zijieKwok/JacKwok-passwall/master/img/passwall.png)
 
+#### 插件及依赖下载:
+[![GitHub release (latest by date)](https://img.shields.io/github/v/release/zijieKwok/JacKwok-passwall?style=for-the-badge&label=下载跳转)](https://github.com/zijieKwok/JacKwok-passwall/releases/tag/4.72-2-1)
 
-* 把openwrt-packages与small仓库重新归类，ssr、passwall、vssr以及依赖合并small
-
-#### 使用方式
+#### 使用说明
 ```yaml
+此passwall版本获取到ip，显示对应地区旗帜
 
-默认ssr与passwall的插件与依赖整合包
+默认passwall与ssr的插件与依赖整合包
 
-使用方法：将整合包上传到openwrt设备的tmp目录，输入命令 opkg install *.ipk
+使用方法：将整合包上传到openwrt设备的tmp目录，输入命令： opkg install *.ipk
 
-默认压缩包里包含ssr passwall bypass passwall2 插件
+默认压缩包里包含passwall  passwall2  ssr  bypass  vssr插件
 
-如果单独安装ssr与依赖，rm -rf {*passwall*,*bypass*,*vssr*}
 ```
 
-* 喜欢追新的可以去下载small-package，该仓库每天自动同步更新
+##### 单独安装passwall与依赖
+`````yaml
+rm -rf {*passwall2*,*ssr*,*bypass*,*vssr*}
+`````
 
-* [small-package仓库地址](https://github.com/kenzok8/small-package) 
+##### 单独安装passwall2与依赖 
+`````yaml
+rm -rf {*passwall*,*ssr*,*bypass*,*vssr*}
+`````
+##### 单独安装ssr与依赖，
+`````yaml
+rm -rf {*passwall*,*passwall2*,*bypass*,*vssr*}
+`````
+##### 单独安装bypass与依赖
+`````yaml
+rm -rf {*passwall*,*passwall2*,*ssr*,*vssr*}
+`````
+##### 单独安装vssr与依赖
+`````yaml
+rm -rf {*passwall*,*passwall2*,*ssr*,*bypass*}
+`````
 
 
-##### 插件每日更新下载:
-[![GitHub release (latest by date)](https://img.shields.io/github/v/release/kenzok8/small?style=for-the-badge&label=插件下载)](https://github.com/kenzok8/small/releases/latest)
-
-+ [ssr+passwall依赖仓库](https://github.com/kenzok8/small)
-
-+ [openwrt固件与插件下载](https://op.dllkids.xyz/)
-
-#### 使用
+#### 线下编译使用
 一键命令
 ```yaml
-sed -i '$a src-git kenzo https://github.com/kenzok8/openwrt-packages' feeds.conf.default
-sed -i '$a src-git small https://github.com/kenzok8/small' feeds.conf.default
+sed -i '$a src-git JacKwok_passwall https://github.com/zijieKwok/JacKwok-passwall' feeds.conf.default
 git pull
 ./scripts/feeds update -a
 ./scripts/feeds install -a
 make menuconfig
 ```
 
-#### 注意
-编译新版Sing-box和hysteria，需golang版本1.20或者以上版本 ，可以用以下命令
+#### 注意请检查feeds/packages/lang/golang/Makefile是否1.20以上版本
+编译新版Sing-box和hysteria，需golang版本1.20或者以上版本 ，可以使用用以下命令更新
 ```yaml
 rm -rf feeds/packages/lang/golang
 git clone https://github.com/sbwml/packages_lang_golang -b 21.x feeds/packages/lang/golang
+```
+
+第二种
+```yaml
+pushd feeds/packages/lang
+rm -rf golang && svn co https://github.com/openwrt/packages/branches/openwrt-23.05/lang/golang
+popd
 ```
 
