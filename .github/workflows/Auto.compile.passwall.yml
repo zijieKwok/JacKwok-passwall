@@ -1,8 +1,8 @@
 #
-# Copyright (c) 2022-2024 SMALLPROGRAM <https://github.com/smallprogram>
+# Copyright (c) 2022-2023 SMALLPROGRAM <https://github.com/smallprogram>
 # Description: Auto compile
 #
-name: "Auto.compile.passwall"
+name: "Auto compile with openwrt sdk"
 on:
   repository_dispatch:
   workflow_dispatch:
@@ -13,13 +13,13 @@ on:
         default: 'false'
   push:
     branches:
-      - 'master'
+      - 'main'
     paths:
       - 'luci-app-passwall/Makefile'
 env:
   TZ: Asia/Shanghai
-  passwall: zijieKwok/JacKwok-passwall
-  packages: zijieKwok/JacKwok-passwall
+  passwall: ${{ github.repository }}
+  packages: zijieKwok/passwall-packages
 
 
 jobs:
@@ -31,10 +31,10 @@ jobs:
       has_update: ${{ steps.check_version.outputs.has_update }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@main
         with:
           fetch-depth: 0
-          ref: 'master'
+          ref: 'main'
 
       - name: Check version
         id: check_version
@@ -70,7 +70,7 @@ jobs:
           body_path: release.txt
 
 
-job_build_passwall:
+  job_build_passwall:
     name: Build passwall [Luci ${{ matrix.luci_ver }}]
     needs: job_check
     if: needs.job_check.outputs.has_update == 'true'
@@ -268,8 +268,8 @@ job_build_passwall:
           echo "src-git packages https://github.com/openwrt/packages.git;openwrt-23.05" >> feeds.conf
           echo "src-git luci https://github.com/openwrt/luci.git;openwrt-23.05" >> feeds.conf
           echo "src-git routing https://git.openwrt.org/feed/routing.git;openwrt-23.05"  >> feeds.conf
-          echo "src-git passwall_packages https://github.com/${{ env.packages }}.git;master" >> feeds.conf
-          echo "src-git passwall https://github.com/${{ env.passwall }}.git;master" >> feeds.conf
+          echo "src-git passwall_packages https://github.com/${{ env.packages }}.git;main" >> feeds.conf
+          echo "src-git passwall https://github.com/${{ env.passwall }}.git;main" >> feeds.conf
 
           ./scripts/feeds update -a
           ./scripts/feeds install -a -f -p passwall_packages
@@ -280,7 +280,6 @@ job_build_passwall:
           echo "CONFIG_ALL=n" >> .config
           echo "CONFIG_AUTOREMOVE=n" >> .config
           echo "CONFIG_PACKAGE_luci-app-passwall=m" >> .config
-          echo "CONFIG_PACKAGE_luci-i18n-passwall-zh-cn=y" >> .config
           echo "CONFIG_PACKAGE_luci-app-passwall_Iptables_Transparent_Proxy=y" >> .config
           echo "CONFIG_PACKAGE_luci-app-passwall_Nftables_Transparent_Proxy=y" >> .config
           echo "CONFIG_PACKAGE_luci-app-passwall_INCLUDE_Brook=y" >> .config
@@ -351,7 +350,7 @@ job_build_passwall:
           for pkg in $pkgs; do
             version=$(awk -F ':=' '/PKG_VERSION:=/{print $2}' feeds/passwall_packages/$pkg/Makefile | sed 's/\r//g')
             [ -z "${version}" ] && version=$(awk -F ':=' '/PKG_SOURCE_DATE:=/{print $2}' feeds/passwall_packages/$pkg/Makefile | sed 's/\r//g')
-          echo "**:ice_cube: $pkg**|**${version}**" >> release.txt
+            echo "**:ice_cube: $pkg**|**${version}**" >> release.txt
           done
           echo "**:ice_cube: v2ray-geoip**|**$(awk -F ':=' '/GEOIP_VER:=/{print $2}' feeds/passwall_packages/v2ray-geodata/Makefile)**" >> release.txt
           echo "**:ice_cube: v2ray-geosite**|**$(awk -F ':=' '/GEOSITE_VER:=/{print $2}' feeds/passwall_packages/v2ray-geodata/Makefile)**" >> release.txt
