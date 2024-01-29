@@ -1,5 +1,6 @@
 ## passwall软件包自动云编译
 #### 自动更新依赖：[![Workflow Status](https://github.com/zijieKwok/JacKwok-passwall/actions/workflows/Auto.update.packages.master.yml/badge.svg)](https://github.com/zijieKwok/JacKwok-passwall/actions)      自动编译插件及依赖：[![Workflow Status](https://github.com/zijieKwok/JacKwok-passwall/actions/workflows/build2.yml/badge.svg)](https://github.com/zijieKwok/JacKwok-passwall/actions)
+[![Workflow Status](https://github.com/zijieKwok/JacKwok-passwall/actions/workflows/build9.yml/badge.svg)](https://github.com/zijieKwok/JacKwok-passwall/actions)
 <summary>预览截图</summary>
 <p>
 
