@@ -1,51 +1,33 @@
 local api = require "luci.passwall.api"
 local appname = api.appname
+local sys = api.sys
 local has_ss = api.is_finded("ss-redir")
 local has_ss_rust = api.is_finded("sslocal")
 local has_trojan_plus = api.is_finded("trojan-plus")
 local has_singbox = api.finded_com("singbox")
 local has_xray = api.finded_com("xray")
 local has_trojan_go = api.finded_com("trojan-go")
-local has_hysteria2 = api.finded_com("hysteria")
 local ss_aead_type = {}
 local trojan_type = {}
-local vmess_type = {}
-local vless_type = {}
-local hysteria2_type = {}
 if has_ss then
-	local s = "shadowsocks-libev"
-	table.insert(ss_aead_type, s)
+	ss_aead_type[#ss_aead_type + 1] = "shadowsocks-libev"
 end
 if has_ss_rust then
-	local s = "shadowsocks-rust"
-	table.insert(ss_aead_type, s)
+	ss_aead_type[#ss_aead_type + 1] = "shadowsocks-rust"
 end
 if has_trojan_plus then
-	local s = "trojan-plus"
-	table.insert(trojan_type, s)
+	trojan_type[#trojan_type + 1] = "trojan-plus"
 end
 if has_singbox then
-	local s = "sing-box"
-	table.insert(trojan_type, s)
-	table.insert(ss_aead_type, s)
-	table.insert(vmess_type, s)
-	table.insert(vless_type, s)
-	table.insert(hysteria2_type, s)
+	trojan_type[#trojan_type + 1] = "sing-box"
+	ss_aead_type[#ss_aead_type + 1] = "sing-box"
 end
 if has_xray then
-	local s = "xray"
-	table.insert(trojan_type, s)
-	table.insert(ss_aead_type, s)
-	table.insert(vmess_type, s)
-	table.insert(vless_type, s)
+	trojan_type[#trojan_type + 1] = "xray"
+	ss_aead_type[#ss_aead_type + 1] = "xray"
 end
 if has_trojan_go then
-	local s = "trojan-go"
-	table.insert(trojan_type, s)
-end
-if has_hysteria2 then
-	local s = "hysteria2"
-	table.insert(hysteria2_type, s)
+	trojan_type[#trojan_type + 1] = "trojan-go"
 end
 
 m = Map(appname)
@@ -87,47 +69,20 @@ o:depends("filter_keyword_mode", "3")
 o:depends("filter_keyword_mode", "4")
 
 if #ss_aead_type > 0 then
-	o = s:option(ListValue, "ss_aead_type", translatef("%s Node Use Type", "SS AEAD"))
+	o = s:option(ListValue, "ss_aead_type", translate("SS AEAD Node Use Type"))
 	o.default = "global"
 	o:value("global", translate("Use global config"))
 	for key, value in pairs(ss_aead_type) do
-		o:value(value)
+		o:value(value, translate(value:gsub("^%l",string.upper)))
 	end
 end
 
 if #trojan_type > 0 then
-	o = s:option(ListValue, "trojan_type", translatef("%s Node Use Type", "Trojan"))
+	o = s:option(ListValue, "trojan_type", translate("Trojan Node Use Type"))
 	o.default = "global"
 	o:value("global", translate("Use global config"))
 	for key, value in pairs(trojan_type) do
-		o:value(value)
-	end
-end
-
-if #vmess_type > 0 then
-	o = s:option(ListValue, "vmess_type", translatef("%s Node Use Type", "VMess"))
-	o.default = "global"
-	o:value("global", translate("Use global config"))
-	for key, value in pairs(vmess_type) do
-		o:value(value)
-	end
-end
-
-if #vless_type > 0 then
-	o = s:option(ListValue, "vless_type", translatef("%s Node Use Type", "VLESS"))
-	o.default = "global"
-	o:value("global", translate("Use global config"))
-	for key, value in pairs(vless_type) do
-		o:value(value)
-	end
-end
-
-if #hysteria2_type > 0 then
-	o = s:option(ListValue, "hysteria2_type", translatef("%s Node Use Type", "Hysteria2"))
-	o.default = "global"
-	o:value("global", translate("Use global config"))
-	for key, value in pairs(hysteria2_type) do
-		o:value(value)
+		o:value(value, translate(value:gsub("^%l",string.upper)))
 	end
 end
 

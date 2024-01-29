@@ -285,6 +285,8 @@ function gen_outbound(flag, node, tag, proxy_table)
 
 		if node.protocol == "hysteria" then
 			protocol_table = {
+				up = node.hysteria_up_mbps .. " Mbps",
+				down = node.hysteria_down_mbps .. " Mbps",
 				up_mbps = tonumber(node.hysteria_up_mbps),
 				down_mbps = tonumber(node.hysteria_down_mbps),
 				obfs = node.hysteria_obfs,
@@ -1050,31 +1052,8 @@ function gen_config(var)
 							table.insert(protocols, w)
 						end)
 					end
-
-					local inboundTag = nil
-					if e["inbound"] and e["inbound"] ~= "" then
-						inboundTag = {}
-						if e["inbound"]:find("tproxy") then
-							if tcp_redir_port then
-								if tcp_proxy_way == "tproxy" then
-									table.insert(inboundTag, "tproxy_tcp")
-								else
-									table.insert(inboundTag, "redirect_tcp")
-								end
-							end
-							if udp_redir_port then
-								table.insert(inboundTag, "tproxy_udp")
-							end
-						end
-						if e["inbound"]:find("socks") then
-							if local_socks_port then
-								table.insert(inboundTag, "socks-in")
-							end
-						end
-					end
 					
 					local rule = {
-						inbound = inboundTag,
 						outbound = outboundTag,
 						invert = false, --匹配反选
 						protocol = protocols
@@ -1310,14 +1289,15 @@ function gen_config(var)
 				strategy = remote_strategy,
 			})
 
-			if not experimental then
-				experimental = {}
+			if tags and tags:find("with_clash_api") then
+				if not experimental then
+					experimental = {}
+				end
+				experimental.clash_api = {
+					store_fakeip = true,
+					cache_file = "/tmp/singbox_passwall_" .. flag .. ".db"
+				}
 			end
-			experimental.cache_file = {
-				enabled = true,
-				store_fakeip = true,
-				path = "/tmp/singbox_passwall_" .. flag .. ".db"
-			}
 		end
 	
 		if direct_dns_udp_server then

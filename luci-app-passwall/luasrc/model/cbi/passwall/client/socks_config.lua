@@ -108,8 +108,10 @@ o.default = "https://www.google.com/generate_204"
 o:depends("enable_autoswitch", true)
 
 for k, v in pairs(nodes_table) do
-	autoswitch_backup_node:value(v.id, v["remark"])
-	socks_node:value(v.id, v["remark"])
+	if v.node_type == "normal" then
+		autoswitch_backup_node:value(v.id, v["remark"])
+		socks_node:value(v.id, v["remark"])
+	end
 end
 
 m:append(Template(appname .. "/socks_auto_switch/footer"))
