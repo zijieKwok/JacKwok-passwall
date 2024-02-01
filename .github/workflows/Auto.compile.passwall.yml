@@ -2,7 +2,7 @@
 # Copyright (c) 2022-2023 SMALLPROGRAM <https://github.com/smallprogram>
 # Description: Auto compile
 #
-name: "Auto-compile-passwall.ipk"
+name: "Auto-compile-passwall2.ipk"
 on:
   repository_dispatch:
   workflow_dispatch:
@@ -15,10 +15,10 @@ on:
     branches:
       - 'master'
     paths:
-      - 'luci-app-passwall/Makefile'
+      - 'luci-app-passwall2/Makefile'
 env:
   TZ: Asia/Shanghai
-  passwall: ${{ github.repository }}
+  passwall2: ${{ github.repository }}
   packages: zijieKwok/JacKwok-passwall
 
 
@@ -27,7 +27,7 @@ jobs:
     name: Check Version
     runs-on: ubuntu-latest
     outputs:
-      passwall_version: ${{ steps.check_version.outputs.latest_version }}
+      passwall2_version: ${{ steps.check_version.outputs.latest_version }}
       has_update: ${{ steps.check_version.outputs.has_update }}
     steps:
       - name: Checkout
@@ -39,9 +39,9 @@ jobs:
       - name: Check version
         id: check_version
         env:
-          url_release: https://api.github.com/repos/${{ env.passwall }}/releases/latest
+          url_release: https://api.github.com/repos/${{ env.passwall2 }}/releases/latest
         run: |
-          cd luci-app-passwall
+          cd luci-app-passwall2
           latest_version=$(awk -F ':=' '/PKG_VERSION|PKG_RELEASE/ {print $2}' Makefile | sed ':a;N;s/\n$//;s/\n/-/;ba')
           latest_release=$(wget -qO- -t1 -T2 ${{env.url_release}} | awk -F '"' '/tag_name/{print $4}')
           has_update=$([ "${latest_version}" != "${latest_release}" ] && echo true || echo false)
@@ -55,9 +55,9 @@ jobs:
         if: steps.check_version.outputs.has_update == 'true'
         run: |
           echo "## :mega:Update content" >> release.txt
-          echo "![](https://img.shields.io/github/downloads/${{ env.passwall }}/${{steps.check_version.outputs.latest_version}}/total?style=flat-square)" >> release.txt
-          echo "### Passwall Info" >> release.txt
-          echo "**:minidisc: Passwall Version: ${{steps.check_version.outputs.latest_version}}**" >> release.txt
+          echo "![](https://img.shields.io/github/downloads/${{ env.passwall2 }}/${{steps.check_version.outputs.latest_version}}/total?style=flat-square)" >> release.txt
+          echo "### passwall2 Info" >> release.txt
+          echo "**:minidisc: passwall2 Version: ${{steps.check_version.outputs.latest_version}}**" >> release.txt
           touch release.txt
 
       - name: Generate new tag & release
@@ -70,8 +70,8 @@ jobs:
           body_path: release.txt
 
 
-  job_build_passwall:
-    name: Build passwall [Luci ${{ matrix.luci_ver }}]
+  job_build_passwall2:
+    name: Build passwall2 [Luci ${{ matrix.luci_ver }}]
     needs: job_check
     if: needs.job_check.outputs.has_update == 'true'
     runs-on: ubuntu-latest
@@ -113,72 +113,72 @@ jobs:
           echo "src-git packages https://github.com/openwrt/packages.git;openwrt-${{ matrix.sdk_ver }}" >> feeds.conf
           echo "src-git luci https://github.com/openwrt/luci.git;openwrt-${{ matrix.luci_ver }}" >> feeds.conf
           echo "src-git routing https://git.openwrt.org/feed/routing.git;openwrt-${{ matrix.sdk_ver }}"  >> feeds.conf
-          echo "src-git passwall_packages https://github.com/${{ env.packages }}.git;master" >> feeds.conf
-          echo "src-git passwall https://github.com/${{ env.passwall }}.git;master" >> feeds.conf
+          echo "src-git passwall2_packages https://github.com/${{ env.packages }}.git;master" >> feeds.conf
+          echo "src-git passwall2 https://github.com/${{ env.passwall2 }}.git;master" >> feeds.conf
           ./scripts/feeds update -a
-          echo "CONFIG_PACKAGE_luci-app-passwall=m" > .config
-          ./scripts/feeds install -d n luci-app-passwall
+          echo "CONFIG_PACKAGE_luci-app-passwall2=m" > .config
+          ./scripts/feeds install -d n luci-app-passwall2
           make download -j8
 
-      - name: Configure passwall
+      - name: Configure passwall2
         run: |
           cd sdk
-          ./scripts/feeds update passwall_packages
-          ./scripts/feeds update passwall
-          ./scripts/feeds install luci-app-passwall
+          ./scripts/feeds update passwall2_packages
+          ./scripts/feeds update passwall2
+          ./scripts/feeds install luci-app-passwall2
           echo "CONFIG_ALL_NONSHARED=n" > .config
           echo "CONFIG_ALL_KMODS=n" >> .config
           echo "CONFIG_ALL=n" >> .config
           echo "CONFIG_AUTOREMOVE=n" >> .config
           echo "CONFIG_LUCI_LANG_zh_Hans=y" >> .config
-          echo "CONFIG_PACKAGE_luci-app-passwall=m" >> .config
-          echo "CONFIG_PACKAGE_luci-app-passwall_Iptables_Transparent_Proxy=n" >> .config
-          echo "CONFIG_PACKAGE_luci-app-passwall_Nftables_Transparent_Proxy=n" >> .config
-          echo "CONFIG_PACKAGE_luci-app-passwall_INCLUDE_Brook=n" >> .config
-          echo "CONFIG_PACKAGE_luci-app-passwall_INCLUDE_ChinaDNS_NG=n" >> .config
-          echo "CONFIG_PACKAGE_luci-app-passwall_INCLUDE_Haproxy=n" >> .config
-          echo "CONFIG_PACKAGE_luci-app-passwall_INCLUDE_Hysteria=n" >> .config
-          echo "CONFIG_PACKAGE_luci-app-passwall_INCLUDE_NaiveProxy=n" >> .config
-          echo "CONFIG_PACKAGE_luci-app-passwall_INCLUDE_Shadowsocks_Libev_Client=n" >> .config
-          echo "CONFIG_PACKAGE_luci-app-passwall_INCLUDE_Shadowsocks_Libev_Server=n" >> .config
-          echo "CONFIG_PACKAGE_luci-app-passwall_INCLUDE_Shadowsocks_Rust_Client=n" >> .config
-          echo "CONFIG_PACKAGE_luci-app-passwall_INCLUDE_Shadowsocks_Rust_Server=n" >> .config
-          echo "CONFIG_PACKAGE_luci-app-passwall_INCLUDE_ShadowsocksR_Libev_Client=n" >> .config
-          echo "CONFIG_PACKAGE_luci-app-passwall_INCLUDE_ShadowsocksR_Libev_Server=n" >> .config
-          echo "CONFIG_PACKAGE_luci-app-passwall_INCLUDE_Simple_Obfs=n" >> .config
-          echo "CONFIG_PACKAGE_luci-app-passwall_INCLUDE_SingBox=n" >> .config
-          echo "CONFIG_PACKAGE_luci-app-passwall_INCLUDE_Trojan_GO=n" >> .config
-          echo "CONFIG_PACKAGE_luci-app-passwall_INCLUDE_Trojan_Plus=n" >> .config
-          echo "CONFIG_PACKAGE_luci-app-passwall_INCLUDE_tuic_client=n" >> .config
-          echo "CONFIG_PACKAGE_luci-app-passwall_INCLUDE_V2ray_Geodata=n" >> .config
-          echo "CONFIG_PACKAGE_luci-app-passwall_INCLUDE_V2ray_Plugin=n" >> .config
-          echo "CONFIG_PACKAGE_luci-app-passwall_INCLUDE_Xray=n" >> .config
-          echo "CONFIG_PACKAGE_luci-app-passwall_INCLUDE_Xray_Plugin=n" >> .config
+          echo "CONFIG_PACKAGE_luci-app-passwall2=m" >> .config
+          echo "CONFIG_PACKAGE_luci-app-passwall2_Iptables_Transparent_Proxy=n" >> .config
+          echo "CONFIG_PACKAGE_luci-app-passwall2_Nftables_Transparent_Proxy=n" >> .config
+          echo "CONFIG_PACKAGE_luci-app-passwall2_INCLUDE_Brook=n" >> .config
+          echo "CONFIG_PACKAGE_luci-app-passwall2_INCLUDE_ChinaDNS_NG=n" >> .config
+          echo "CONFIG_PACKAGE_luci-app-passwall2_INCLUDE_Haproxy=n" >> .config
+          echo "CONFIG_PACKAGE_luci-app-passwall2_INCLUDE_Hysteria=n" >> .config
+          echo "CONFIG_PACKAGE_luci-app-passwall2_INCLUDE_NaiveProxy=n" >> .config
+          echo "CONFIG_PACKAGE_luci-app-passwall2_INCLUDE_Shadowsocks_Libev_Client=n" >> .config
+          echo "CONFIG_PACKAGE_luci-app-passwall2_INCLUDE_Shadowsocks_Libev_Server=n" >> .config
+          echo "CONFIG_PACKAGE_luci-app-passwall2_INCLUDE_Shadowsocks_Rust_Client=n" >> .config
+          echo "CONFIG_PACKAGE_luci-app-passwall2_INCLUDE_Shadowsocks_Rust_Server=n" >> .config
+          echo "CONFIG_PACKAGE_luci-app-passwall2_INCLUDE_ShadowsocksR_Libev_Client=n" >> .config
+          echo "CONFIG_PACKAGE_luci-app-passwall2_INCLUDE_ShadowsocksR_Libev_Server=n" >> .config
+          echo "CONFIG_PACKAGE_luci-app-passwall2_INCLUDE_Simple_Obfs=n" >> .config
+          echo "CONFIG_PACKAGE_luci-app-passwall2_INCLUDE_SingBox=n" >> .config
+          echo "CONFIG_PACKAGE_luci-app-passwall2_INCLUDE_Trojan_GO=n" >> .config
+          echo "CONFIG_PACKAGE_luci-app-passwall2_INCLUDE_Trojan_Plus=n" >> .config
+          echo "CONFIG_PACKAGE_luci-app-passwall2_INCLUDE_tuic_client=n" >> .config
+          echo "CONFIG_PACKAGE_luci-app-passwall2_INCLUDE_V2ray_Geodata=n" >> .config
+          echo "CONFIG_PACKAGE_luci-app-passwall2_INCLUDE_V2ray_Plugin=n" >> .config
+          echo "CONFIG_PACKAGE_luci-app-passwall2_INCLUDE_Xray=n" >> .config
+          echo "CONFIG_PACKAGE_luci-app-passwall2_INCLUDE_Xray_Plugin=n" >> .config
           make defconfig
 
-      - name: Compile passwall
+      - name: Compile passwall2
         id: compile
         run: |
           cd sdk
-          echo "make package/luci-app-passwall/{clean,compile} -j$(nproc)"
-          make package/luci-app-passwall/{clean,compile} -j$(nproc)
-          mv bin/packages/x86_64/passwall/ ../
+          echo "make package/luci-app-passwall2/{clean,compile} -j$(nproc)"
+          make package/luci-app-passwall2/{clean,compile} -j$(nproc)
+          mv bin/packages/x86_64/passwall2/ ../
           make clean
           rm .config .config.old
-          cd ../passwall
+          cd ../passwall2
           for i in $(ls); do mv $i luci-${{ matrix.luci_ver }}_$i; done
           cd ..
           echo "status=success" >> $GITHUB_OUTPUT
           echo "FIRMWARE=$PWD" >> $GITHUB_ENV
 
-      - name: Upload passwall ipks to release
+      - name: Upload passwall2 ipks to release
         uses: softprops/action-gh-release@v1
         if: steps.compile.outputs.status == 'success'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{needs.job_check.outputs.passwall_version}}
-          files: ${{ env.FIRMWARE }}/passwall/*.ipk
+          tag_name: ${{needs.job_check.outputs.passwall2_version}}
+          files: ${{ env.FIRMWARE }}/passwall2/*.ipk
 
 
   job_auto_compile:
@@ -227,40 +227,40 @@ jobs:
           echo "src-git packages https://github.com/openwrt/packages.git;openwrt-23.05" >> feeds.conf
           echo "src-git luci https://github.com/openwrt/luci.git;openwrt-23.05" >> feeds.conf
           echo "src-git routing https://git.openwrt.org/feed/routing.git;openwrt-23.05"  >> feeds.conf
-          echo "src-git passwall_packages https://github.com/${{ env.packages }}.git;master" >> feeds.conf
-          echo "src-git passwall https://github.com/${{ env.passwall }}.git;master" >> feeds.conf
+          echo "src-git passwall2_packages https://github.com/${{ env.packages }}.git;master" >> feeds.conf
+          echo "src-git passwall2 https://github.com/${{ env.passwall2 }}.git;master" >> feeds.conf
 
           ./scripts/feeds update -a
-          ./scripts/feeds install -a -f -p passwall_packages
-          ./scripts/feeds install luci-app-passwall
+          ./scripts/feeds install -a -f -p passwall2_packages
+          ./scripts/feeds install luci-app-passwall2
 
           echo "CONFIG_ALL_NONSHARED=n" > .config
           echo "CONFIG_ALL_KMODS=n" >> .config
           echo "CONFIG_ALL=n" >> .config
           echo "CONFIG_AUTOREMOVE=n" >> .config
-          echo "CONFIG_PACKAGE_luci-app-passwall=m" >> .config
-          echo "CONFIG_PACKAGE_luci-app-passwall_Iptables_Transparent_Proxy=y" >> .config
-          echo "CONFIG_PACKAGE_luci-app-passwall_Nftables_Transparent_Proxy=y" >> .config
-          echo "CONFIG_PACKAGE_luci-app-passwall_INCLUDE_Brook=y" >> .config
-          echo "CONFIG_PACKAGE_luci-app-passwall_INCLUDE_ChinaDNS_NG=y" >> .config
-          echo "CONFIG_PACKAGE_luci-app-passwall_INCLUDE_Haproxy=y" >> .config
-          echo "CONFIG_PACKAGE_luci-app-passwall_INCLUDE_Hysteria=y" >> .config
-          echo "CONFIG_PACKAGE_luci-app-passwall_INCLUDE_NaiveProxy=y" >> .config
-          echo "CONFIG_PACKAGE_luci-app-passwall_INCLUDE_Shadowsocks_Libev_Client=y" >> .config
-          echo "CONFIG_PACKAGE_luci-app-passwall_INCLUDE_Shadowsocks_Libev_Server=y" >> .config
-          echo "CONFIG_PACKAGE_luci-app-passwall_INCLUDE_Shadowsocks_Rust_Client=y" >> .config
-          echo "CONFIG_PACKAGE_luci-app-passwall_INCLUDE_Shadowsocks_Rust_Server=y" >> .config
-          echo "CONFIG_PACKAGE_luci-app-passwall_INCLUDE_ShadowsocksR_Libev_Client=y" >> .config
-          echo "CONFIG_PACKAGE_luci-app-passwall_INCLUDE_ShadowsocksR_Libev_Server=y" >> .config
-          echo "CONFIG_PACKAGE_luci-app-passwall_INCLUDE_Simple_Obfs=y" >> .config
-          echo "CONFIG_PACKAGE_luci-app-passwall_INCLUDE_SingBox=y" >> .config
-          echo "CONFIG_PACKAGE_luci-app-passwall_INCLUDE_Trojan_GO=y" >> .config
-          echo "CONFIG_PACKAGE_luci-app-passwall_INCLUDE_Trojan_Plus=y" >> .config
-          echo "CONFIG_PACKAGE_luci-app-passwall_INCLUDE_tuic_client=y" >> .config
-          echo "CONFIG_PACKAGE_luci-app-passwall_INCLUDE_V2ray_Geodata=y" >> .config
-          echo "CONFIG_PACKAGE_luci-app-passwall_INCLUDE_V2ray_Plugin=y" >> .config
-          echo "CONFIG_PACKAGE_luci-app-passwall_INCLUDE_Xray=y" >> .config
-          echo "CONFIG_PACKAGE_luci-app-passwall_INCLUDE_Xray_Plugin=y" >> .config
+          echo "CONFIG_PACKAGE_luci-app-passwall2=m" >> .config
+          echo "CONFIG_PACKAGE_luci-app-passwall2_Iptables_Transparent_Proxy=y" >> .config
+          echo "CONFIG_PACKAGE_luci-app-passwall2_Nftables_Transparent_Proxy=y" >> .config
+          echo "CONFIG_PACKAGE_luci-app-passwall2_INCLUDE_Brook=y" >> .config
+          echo "CONFIG_PACKAGE_luci-app-passwall2_INCLUDE_ChinaDNS_NG=y" >> .config
+          echo "CONFIG_PACKAGE_luci-app-passwall2_INCLUDE_Haproxy=y" >> .config
+          echo "CONFIG_PACKAGE_luci-app-passwall2_INCLUDE_Hysteria=y" >> .config
+          echo "CONFIG_PACKAGE_luci-app-passwall2_INCLUDE_NaiveProxy=y" >> .config
+          echo "CONFIG_PACKAGE_luci-app-passwall2_INCLUDE_Shadowsocks_Libev_Client=y" >> .config
+          echo "CONFIG_PACKAGE_luci-app-passwall2_INCLUDE_Shadowsocks_Libev_Server=y" >> .config
+          echo "CONFIG_PACKAGE_luci-app-passwall2_INCLUDE_Shadowsocks_Rust_Client=y" >> .config
+          echo "CONFIG_PACKAGE_luci-app-passwall2_INCLUDE_Shadowsocks_Rust_Server=y" >> .config
+          echo "CONFIG_PACKAGE_luci-app-passwall2_INCLUDE_ShadowsocksR_Libev_Client=y" >> .config
+          echo "CONFIG_PACKAGE_luci-app-passwall2_INCLUDE_ShadowsocksR_Libev_Server=y" >> .config
+          echo "CONFIG_PACKAGE_luci-app-passwall2_INCLUDE_Simple_Obfs=y" >> .config
+          echo "CONFIG_PACKAGE_luci-app-passwall2_INCLUDE_SingBox=y" >> .config
+          echo "CONFIG_PACKAGE_luci-app-passwall2_INCLUDE_Trojan_GO=y" >> .config
+          echo "CONFIG_PACKAGE_luci-app-passwall2_INCLUDE_Trojan_Plus=y" >> .config
+          echo "CONFIG_PACKAGE_luci-app-passwall2_INCLUDE_tuic_client=y" >> .config
+          echo "CONFIG_PACKAGE_luci-app-passwall2_INCLUDE_V2ray_Geodata=y" >> .config
+          echo "CONFIG_PACKAGE_luci-app-passwall2_INCLUDE_V2ray_Plugin=y" >> .config
+          echo "CONFIG_PACKAGE_luci-app-passwall2_INCLUDE_Xray=y" >> .config
+          echo "CONFIG_PACKAGE_luci-app-passwall2_INCLUDE_Xray_Plugin=y" >> .config
 
           make defconfig
 
@@ -275,7 +275,7 @@ jobs:
         id: compile
         run: |
           cd sdk
-          make package/luci-app-passwall/{clean,compile} -j$(nproc)
+          make package/luci-app-passwall2/{clean,compile} -j$(nproc)
 
           echo "status=success" >> $GITHUB_OUTPUT
 
@@ -286,7 +286,7 @@ jobs:
           cd sdk
           mkdir upload
 
-          zip -jr upload/passwall_packages_ipk_${{ matrix.platform }}.zip bin/packages/*/passwall_packages/
+          zip -jr upload/passwall2_packages_ipk_${{ matrix.platform }}.zip bin/packages/*/passwall2_packages/
 
           echo "FIRMWARE=$PWD" >> $GITHUB_ENV
           echo "status=success" >> $GITHUB_OUTPUT
@@ -297,22 +297,22 @@ jobs:
         run: |
           cd sdk
           echo "## :mega:Update content" >> release.txt
-          echo "![](https://img.shields.io/github/downloads/${{ env.passwall }}/${{needs.job_check.outputs.passwall_version}}/total?style=flat-square)" >> release.txt
-          echo "### Passwall Info" >> release.txt
-          echo "**:minidisc: Passwall Version: ${{needs.job_check.outputs.passwall_version}}**" >> release.txt
+          echo "![](https://img.shields.io/github/downloads/${{ env.passwall2 }}/${{needs.job_check.outputs.passwall2_version}}/total?style=flat-square)" >> release.txt
+          echo "### passwall2 Info" >> release.txt
+          echo "**:minidisc: passwall2 Version: ${{needs.job_check.outputs.passwall2_version}}**" >> release.txt
     
           echo "### Packages Version" >> release.txt
           echo "**package name**|**package version**" >> release.txt
           echo "-|-" >> release.txt
 
-          pkgs=$(ls feeds/passwall_packages -I v2ray-geodata)
+          pkgs=$(ls feeds/passwall2_packages -I v2ray-geodata)
           for pkg in $pkgs; do
-            version=$(awk -F ':=' '/PKG_VERSION:=/{print $2}' feeds/passwall_packages/$pkg/Makefile | sed 's/\r//g')
-            [ -z "${version}" ] && version=$(awk -F ':=' '/PKG_SOURCE_DATE:=/{print $2}' feeds/passwall_packages/$pkg/Makefile | sed 's/\r//g')
+            version=$(awk -F ':=' '/PKG_VERSION:=/{print $2}' feeds/passwall2_packages/$pkg/Makefile | sed 's/\r//g')
+            [ -z "${version}" ] && version=$(awk -F ':=' '/PKG_SOURCE_DATE:=/{print $2}' feeds/passwall2_packages/$pkg/Makefile | sed 's/\r//g')
             echo "**:ice_cube: $pkg**|**${version}**" >> release.txt
           done
-          echo "**:ice_cube: v2ray-geoip**|**$(awk -F ':=' '/GEOIP_VER:=/{print $2}' feeds/passwall_packages/v2ray-geodata/Makefile)**" >> release.txt
-          echo "**:ice_cube: v2ray-geosite**|**$(awk -F ':=' '/GEOSITE_VER:=/{print $2}' feeds/passwall_packages/v2ray-geodata/Makefile)**" >> release.txt
+          echo "**:ice_cube: v2ray-geoip**|**$(awk -F ':=' '/GEOIP_VER:=/{print $2}' feeds/passwall2_packages/v2ray-geodata/Makefile)**" >> release.txt
+          echo "**:ice_cube: v2ray-geosite**|**$(awk -F ':=' '/GEOSITE_VER:=/{print $2}' feeds/passwall2_packages/v2ray-geodata/Makefile)**" >> release.txt
 
           touch release.txt
           echo "status=success" >> $GITHUB_OUTPUT
@@ -323,6 +323,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{needs.job_check.outputs.passwall_version}}
+          tag_name: ${{needs.job_check.outputs.passwall2_version}}
           body_path: ${{ env.FIRMWARE }}/release.txt
           files: ${{ env.FIRMWARE }}/upload/*
