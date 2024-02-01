@@ -14,6 +14,7 @@ jobs:
       fail-fast: false
       matrix:
         arch:
+          - mipsel_24kc
           - aarch64_cortex-a53
           - x86_64
 
