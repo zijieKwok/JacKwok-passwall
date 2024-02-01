@@ -47,7 +47,7 @@ jobs:
           echo -e "4. 如果单独安装ssr与依赖，\`rm -rf {*passwall*,*bypass*,*vssr*}\`\n" >> release.txt
           
       - name: Create Release zip
-        uses: ncipollo/release-action@v1
+        uses: softprops/action-gh-release@v1
         with:
           token: ${{ secrets.ACCESS_TOKEN }}
           artifacts: "${{ matrix.arch }}.zip,bin/packages/${{ matrix.arch }}/packages_ci/*.ipk"
