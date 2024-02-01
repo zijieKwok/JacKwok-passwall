@@ -11,7 +11,7 @@
 ![image](https://raw.githubusercontent.com/zijieKwok/JacKwok-passwall/master/img/passwall.png)
 
 #### 插件及依赖下载:
-[![GitHub release (latest by date)](https://img.shields.io/github/v/release/zijieKwok/JacKwok-passwall?style=for-the-badge&label=下载跳转)](https://github.com/zijieKwok/JacKwok-passwall/releases/tag/4.72-2-1)
+[![GitHub release (latest by date)](https://img.shields.io/github/v/release/zijieKwok/JacKwok-passwall?style=for-the-badge&label=下载跳转)](https://github.com/zijieKwok/JacKwok-passwall/releases/)
 
 #### 使用说明
 ```yaml
