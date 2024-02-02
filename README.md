@@ -1,6 +1,9 @@
 ## passwall软件包自动云编译
 #### 自动更新依赖：[![Workflow Status](https://github.com/zijieKwok/JacKwok-passwall/actions/workflows/Auto.update.packages.yml/badge.svg)](https://github.com/zijieKwok/JacKwok-passwall/actions)   
 #### 自动编译passwall插件及依赖：[![Workflow Status](https://github.com/zijieKwok/JacKwok-passwall/actions/workflows/Auto.compile.passwall.yml/badge.svg)](https://github.com/zijieKwok/JacKwok-passwall/actions)   
+
+## 插件及依赖下载:
+[![GitHub release (latest by date)](https://img.shields.io/github/v/release/zijieKwok/JacKwok-passwall?style=for-the-badge&label=下载跳转)](https://github.com/zijieKwok/JacKwok-passwall/releases/)
 <summary>预览截图</summary>
 <p>
 
@@ -8,8 +11,7 @@
   
 ![image](https://raw.githubusercontent.com/zijieKwok/JacKwok-passwall/master/img/passwall.png)
 
-#### 插件及依赖下载:
-[![GitHub release (latest by date)](https://img.shields.io/github/v/release/zijieKwok/JacKwok-passwall?style=for-the-badge&label=下载跳转)](https://github.com/zijieKwok/JacKwok-passwall/releases/)
+
 
 #### 使用说明
 ```yaml
