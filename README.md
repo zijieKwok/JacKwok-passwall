@@ -24,6 +24,7 @@
 
 #### 线下编译使用
 一键命令
+
 ```yaml
 sed -i '$a src-git JacKwok_passwall https://github.com/zijieKwok/JacKwok-passwall' feeds.conf.default
 git pull
@@ -34,12 +35,14 @@ make menuconfig
 
 #### 注意请检查feeds/packages/lang/golang/Makefile是否1.20以上版本
 编译新版Sing-box和hysteria，需golang版本1.20或者以上版本 ，可以使用用以下命令更新
+
 ```yaml
 rm -rf feeds/packages/lang/golang
 git clone https://github.com/sbwml/packages_lang_golang -b 21.x feeds/packages/lang/golang
 ```
 
 第二种
+
 ```yaml
 pushd feeds/packages/lang
 rm -rf golang && svn co https://github.com/openwrt/packages/branches/openwrt-23.05/lang/golang
