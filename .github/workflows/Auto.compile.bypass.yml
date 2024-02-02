@@ -27,7 +27,7 @@ jobs:
     name: Check Version
     runs-on: ubuntu-latest
     outputs:
-      passwall_version: ${{ steps.check_version.outputs.latest_version }}
+      bypass_version: ${{ steps.check_version.outputs.latest_version }}
       has_update: ${{ steps.check_version.outputs.has_update }}
     steps:
       - name: Checkout
@@ -70,7 +70,7 @@ jobs:
           body_path: release.txt
 
 
-  job_build_passwall:
+  job_build_bypass:
     name: Build bypass [Luci ${{ matrix.luci_ver }}]
     needs: job_check
     if: needs.job_check.outputs.has_update == 'true'
@@ -177,7 +177,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{needs.job_check.outputs.passwall_version}}
+          tag_name: ${{needs.job_check.outputs.bypass_version}}
           files: ${{ env.FIRMWARE }}/bypass/*.ipk
 
 
@@ -322,6 +322,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{needs.job_check.outputs.passwall_version}}
+          tag_name: ${{needs.job_check.outputs.bypass_version}}
           body_path: ${{ env.FIRMWARE }}/release.txt
           files: ${{ env.FIRMWARE }}/upload/*
