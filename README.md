@@ -22,33 +22,6 @@
 
 使用方法：将整合包上传到openwrt设备的tmp目录，输入命令： opkg install *.ipk
 
-默认压缩包里包含passwall  passwall2  ssr  bypass  vssr插件
-
-```
-
-##### 单独安装passwall与依赖
-`````yaml
-rm -rf {*passwall2*,*ssr*,*bypass*,*vssr*}
-`````
-
-##### 单独安装passwall2与依赖 
-`````yaml
-rm -rf {*passwall*,*ssr*,*bypass*,*vssr*}
-`````
-##### 单独安装ssr与依赖，
-`````yaml
-rm -rf {*passwall*,*passwall2*,*bypass*,*vssr*}
-`````
-##### 单独安装bypass与依赖
-`````yaml
-rm -rf {*passwall*,*passwall2*,*ssr*,*vssr*}
-`````
-##### 单独安装vssr与依赖
-`````yaml
-rm -rf {*passwall*,*passwall2*,*ssr*,*bypass*}
-`````
-
-
 #### 线下编译使用
 一键命令
 ```yaml
