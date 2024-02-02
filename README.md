@@ -22,7 +22,7 @@
 默认passwall与ssr的插件与依赖整合包
 
 使用方法：将整合包上传到openwrt设备的tmp目录，输入命令： opkg install *.ipk
-
+```
 #### 线下编译使用一键命令
 
 ```yaml
