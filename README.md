@@ -15,6 +15,7 @@
 
 
 #### 使用说明
+
 ```yaml
 此passwall版本获取到ip，显示对应地区旗帜
 
@@ -22,8 +23,7 @@
 
 使用方法：将整合包上传到openwrt设备的tmp目录，输入命令： opkg install *.ipk
 
-#### 线下编译使用
-一键命令
+#### 线下编译使用一键命令
 
 ```yaml
 sed -i '$a src-git JacKwok_passwall https://github.com/zijieKwok/JacKwok-passwall' feeds.conf.default
