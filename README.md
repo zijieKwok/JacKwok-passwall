@@ -4,6 +4,7 @@
 
 ## 插件及依赖下载:
 [![GitHub release (latest by date)](https://img.shields.io/github/v/release/zijieKwok/JacKwok-passwall?style=for-the-badge&label=下载跳转)](https://github.com/zijieKwok/JacKwok-passwall/releases/)
+
 <summary>预览截图</summary>
 <p>
 
