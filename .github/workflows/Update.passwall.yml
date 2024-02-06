@@ -37,7 +37,7 @@ jobs:
 
         rm -rf ./luci-app-passwall
         rm -rf ./luci-app-openclash
-        rm -rf ./luci-app-bypass
+        
          
         git clone --depth=1 https://github.com/kiddin9/openwrt-packages.git ./pass
         mv ./pass/luci-app-passwall ./
@@ -46,10 +46,6 @@ jobs:
         git clone --depth=1 https://github.com/vernesong/OpenClash.git -b dev
         mv ./OpenClash/luci-app-openclash ./
         rm -rf ./OpenClash
-
-		git clone --depth=1 https://github.com/kiddin9/openwrt-packages.git ./pass1
-        mv ./pass1/luci-app-passwall ./
-        rm -rf ./pass1
 
     - name: Apply
       run: |
