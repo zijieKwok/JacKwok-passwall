@@ -39,8 +39,10 @@ jobs:
 	rm -rf ./luci-app-passwall2
         rm -rf ./luci-app-ssr-plus
 	rm -rf ./luci-app-bypass
+        #rm -rf ./luci-app-bypass
 
-	
+        #git clone https://github.com/zzsj0928/luci-app-pushbot ./luci-app-pushbot
+        #rm -rf ./luci-app-pushbo/README.md
 	git clone --depth=1 https://github.com/kiddin9/openwrt-packages.git ./pass1
         mv ./pass1/luci-app-passwall ./
         rm -rf ./pass1
