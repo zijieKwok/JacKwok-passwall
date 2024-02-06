@@ -1,4 +1,4 @@
-name: Update.sing-box
+name: Update.passwall2
 
 on: 
   repository_dispatch:
