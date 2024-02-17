@@ -1,4 +1,4 @@
-name: Update.openclash
+name: Update.openclash.yml
 
 on: 
   repository_dispatch:
