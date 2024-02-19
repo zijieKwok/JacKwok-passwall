@@ -39,7 +39,7 @@ jobs:
         
         
          
-        git clone --depth=1 https://github.com/kiddin9/openwrt-packages.git ./pass
+        git clone --depth=1 https://github.com/xiaorouji/openwrt-passwall.git ./pass
         mv ./pass/luci-app-passwall ./
         rm -rf ./pass
 
