@@ -41,7 +41,7 @@ jobs:
         mv ./pass/luci-app-passwall ./
         rm -rf ./pass
         rm -rf luci-app-passwall/root/www/luci-static/passwall/*
-		cp -rf luci-app-bypass/root/www/luci-static/bypass/* luci-app-passwall/root/www/luci-static/passwall/
+        cp -rf luci-app-bypass/root/www/luci-static/bypass/* luci-app-passwall/root/www/luci-static/passwall/
 
     - name: Apply
       run: |
