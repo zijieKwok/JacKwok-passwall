@@ -49,7 +49,7 @@ jobs:
         mkdir -p luci-app-passwall/root/www/luci-static/passwall
         cp -rf luci-app-bypass/root/www/luci-static/bypass/* luci-app-passwall/root/www/luci-static/passwall/
         cp -rf luci-app-bypass/root/usr/share/bypass/GeoLite2-Country.mmdb luci-app-passwall/root/usr/share/passwall/
-        sh -c 'cat '\''.github/diy/patches/luci-app-passwall.patch'\''  | patch -d '\''./'\'' -p1 -E --forward --no-backup-if-mismatch' patching file luci-app-passwall/Makefile
+        sh -c 'cat '\''.github/diy/patches/luci-app-passwall.patch'\''  | patch -d '\''./'\'' -p1 -E --forward --no-backup-if-mismatch'
         
 
     - name: Apply
