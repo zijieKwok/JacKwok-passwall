@@ -46,10 +46,13 @@ jobs:
 
     - name: Modify
       run: |
+        shopt -s extglob
+        set +e
+        
         mkdir -p luci-app-passwall/root/www/luci-static/passwall
         cp -rf luci-app-bypass/root/www/luci-static/bypass/* luci-app-passwall/root/www/luci-static/passwall/
         cp -rf luci-app-bypass/root/usr/share/bypass/GeoLite2-Country.mmdb luci-app-passwall/root/usr/share/passwall/
-        echo "#page>div[data-v-d324f700]:first-child{display:none}
+        
     
     - name: Apply
       run: |
