@@ -111,6 +111,10 @@ jobs:
         cp -rf luci-app-bypass/root/usr/share/bypass/GeoLite2-Country.mmdb luci-app-passwall/root/usr/share/passwall/
         ) &
         
+        while [[ ! -f /tmp/ok ||  ! -f /tmp/ok2 ]]; do
+            echo "wait"
+          sleep 1
+        done
 
     - name: Apply
       run: |
