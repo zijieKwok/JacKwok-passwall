@@ -1,8 +1,11 @@
 name: Update.passwall
 
-on: 
-  repository_dispatch:
-  workflow_dispatch:
+on:
+  push:
+    paths:
+      - '.github/workflows/Update.passwall.yml'
+      - '.gitignore'
+      - '.github/diy/**'
 
 # 定时触发编译
   schedule:
