@@ -40,8 +40,8 @@ jobs:
         git clone --depth=1 https://github.com/kiddin9/openwrt-packages.git ./pass
         mv ./pass/luci-app-passwall ./
         rm -rf ./pass
-        rm -rf luci-app-passwall/root/www/luci-static/passwall/*
-        cp -rf luci-app-bypass/root/www/luci-static/bypass/* luci-app-passwall/root/www/luci-static/passwall/
+        
+        cp -rf luci-app-bypass/root/www/luci-static/bypass/flags/un.svg luci-app-passwall/root/www/luci-static/passwall/
 
     - name: Apply
       run: |
