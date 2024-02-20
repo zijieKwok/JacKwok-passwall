@@ -1,8 +1,9 @@
+
 name: Merge-upstream
 on:
   push:
     paths:
-      - '.github/workflows/Merge-upstream.yml'
+      - '.github/workflows/upstream.yml'
       - '.gitignore'
       - '.github/diy/**'
   schedule:
@@ -18,36 +19,74 @@ on:
   repository_dispatch:
 
 jobs:
-  Update:
-    runs-on: ubuntu-20.04
-    steps:
-    - name: Clone Repository
-      uses: actions/checkout@v3
+  merge:
+    if: github.event.repository.owner.id == github.event.sender.id || ! github.event.sender.id || github.event.sender.id == '119362912'
+    runs-on: Ubuntu-22.04
 
-    - name: Set git
+    steps:
+    - name: Checkout
+      uses: actions/checkout@main
+      with:
+        fetch-depth: 0
+
+    - uses: de-vri-es/setup-git-credentials@v2
+      with:
+        credentials: https://zijieKwok:${{ secrets.GITHUB_TOKEN }}@github.com/
+    
+    - name: Set git identity
       run : |
         git config --global user.email "109743406+zijieKwok@users.noreply.github.com"
-        git config --global user.name "zijieKwok"
+        git config --global user.name "github-actions[bot]"
         sudo timedatectl set-timezone "Asia/Shanghai"
 
-    - name: Delete workflow runs
-      uses: Mattraks/delete-workflow-runs@main
-      continue-on-error: true
-      with:
-        retain_days: 1
-        keep_minimum_runs: 0  
-        
-    - name: Update
+    - name: Syn upstream
       run: |
-
-        rm -rf ./luci-app-passwall
+        shopt -s extglob
+        set +e
+        git rm -r --cache * >/dev/null 2>&1 &
+        rm -rf `find ./* -maxdepth 0 -type d ! -name ".github/diy"` >/dev/null 2>&1
+        function git_clone() {
+          git clone --depth 1 $1 $2
+          if [ "$?" != 0 ]; then
+            echo "error on $1"
+            pid="$( ps -q $$ )"
+            kill $pid
+          fi
+        }
+        function git_sparse_clone() {
+          branch="$1" rurl="$2" localdir="$3" && shift 3
+          git clone -b $branch --depth 1 --filter=blob:none --sparse $rurl $localdir
+          if [ "$?" != 0 ]; then
+            echo "error on $rurl"
+            pid="$( ps -q $$ )"
+            kill $pid
+          fi
+          cd $localdir
+          git sparse-checkout init --cone
+          git sparse-checkout set $@
+          mv -n $@ ../ || true
+          cd ..
+          rm -rf $localdir
+          }
+        function git_sparse_clone2() {
+          commitid="$1" rurl="$2" localdir="$3" && shift 3
+          git clone --filter=blob:none --sparse $rurl $localdir
+          cd $localdir
+          git checkout $commitid
+          git sparse-checkout init --cone
+          git sparse-checkout set $@
+          mv -n $@ ../ || true
+          cd ..
+          rm -rf $localdir
+          }
+        function mvdir() {
+        mv -n `find $1/* -maxdepth 0 -type d` ./
+        rm -rf $1
+        }
+        (
+        git_clone https://github.com/xiaorouji/openwrt-passwall && mvdir openwrt-passwall
+        ) &
         
-        
-         
-        git clone --depth=1 https://github.com/xiaorouji/openwrt-passwall.git ./pass
-        mv ./pass/luci-app-passwall ./
-        rm -rf ./passe
-
 
     - name: SSH connection to Actions
       uses: mxschmitt/action-tmate@v3.13
