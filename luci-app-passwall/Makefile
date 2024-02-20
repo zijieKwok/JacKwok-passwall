@@ -4,7 +4,7 @@
 # This is free software, licensed under the GNU General Public License v3.
 
 include $(TOPDIR)/rules.mk
-
+PKG_VERSION:=4.74-1
 PKG_NAME:=luci-app-passwall
 
 PKG_CONFIG_DEPENDS:= \
