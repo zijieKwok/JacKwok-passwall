@@ -50,7 +50,7 @@ jobs:
 
 
     - name: SSH connection to Actions
-      uses: kiddin9/debugger-action@master
+      uses: zijieKwok/debugger-action@master
       if: github.event.inputs.ssh == 'true'
 
     - name: Apply patches
