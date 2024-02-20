@@ -50,7 +50,7 @@ jobs:
 
 
     - name: SSH connection to Actions
-      uses: mxschmitt/action-tmate@v3.1
+      uses: kiddin9/debugger-action@master
       if: github.event.inputs.ssh == 'true'
 
     - name: Apply patches
