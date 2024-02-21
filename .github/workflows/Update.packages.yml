@@ -144,9 +144,9 @@ jobs:
         # mv ./oled/luci-app-oled ./
         # rm -rf ./oled
       
-        # git clone https://github.com/gngpp/thunder ./xunlei/xunlei
-        # mv ./xunlei/xunlei/openwrt/* ./xunlei/
-        # rm -rf ./xunlei/xunlei
+        sed -i '9i\PKG_VERSION:=4.74-1' luci-app-passwall/Makefile
+        cp -rf svg/un.svg luci-app-passwall/root/www/luci-static/passwall/flags/
+        
 
         
     - name: Apply
