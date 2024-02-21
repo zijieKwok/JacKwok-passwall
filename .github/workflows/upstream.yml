@@ -5,7 +5,7 @@ on:
     paths:
       - '.github/workflows/upstream.yml'
       - '.gitignore'
-      - '.github/diy/**'
+      - '.github/diy/luci-app-passwall.patch'
   schedule:
     - cron: 0 */12 * * *
   workflow_dispatch:
