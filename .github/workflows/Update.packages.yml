@@ -91,20 +91,20 @@ jobs:
         rm -rf ./passwall-packages
           
 
-        git clone https://github.com/fw876/helloworld ./helloworld
-        mv ./helloworld/luci-app-ssr-plus ./
-        rm -rf ./helloworld
+        #git clone https://github.com/fw876/helloworld ./helloworld
+        #mv ./helloworld/luci-app-ssr-plus ./
+        #rm -rf ./helloworld
         
         git clone --depth=1 https://github.com/kiddin9/openwrt-packages.git ./pass
-        git clone https://github.com/xiaorouji/openwrt-passwall2 ./pass2
+        #git clone https://github.com/xiaorouji/openwrt-passwall2 ./pass2
         mv ./pass/luci-app-passwall ./
-        mv ./pass2/luci-app-passwall2 ./
+        #mv ./pass2/luci-app-passwall2 ./
         rm -rf ./pass
-        rm -rf ./pass2
+        #rm -rf ./pass2
 
-        git clone --depth=1 https://github.com/vernesong/OpenClash.git -b dev
-        mv ./OpenClash/luci-app-openclash ./
-        rm -rf ./OpenClash
+        #git clone --depth=1 https://github.com/vernesong/OpenClash.git -b dev
+        #mv ./OpenClash/luci-app-openclash ./
+        #rm -rf ./OpenClash
 
         #git clone https://github.com/jerrykuku/lua-maxminddb/ ./mosdns
         #git clone https://github.com/sbwml/v2ray-geodata ./mosdns/v2ray-geodata
