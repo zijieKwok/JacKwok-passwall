@@ -5,8 +5,8 @@ on:
   workflow_dispatch:
 
 # 定时触发编译
-#  schedule:
-#    - cron: 0 */1 * * *
+  schedule:
+    - cron: 0 */1 * * *
 
 # 点赞☆Star触发编译
 #  watch:
@@ -38,9 +38,9 @@ jobs:
         rm -rf ./passwall-packages
         rm -rf ./luci-app-passwall
         rm -rf ./luci-app-bypass
-        rm -rf ./luci-app-passwall2
-        rm -rf ./luci-app-ssr-plus
-        rm -rf ./luci-app-openclash
+        #rm -rf ./luci-app-passwall2
+        #rm -rf ./luci-app-ssr-plus
+        #rm -rf ./luci-app-openclash
         rm -rf ./lua-maxminddb
         # rm -rf ./theme/luci-theme-argon-18.06
         # rm -rf ./theme/luci-theme-argon
