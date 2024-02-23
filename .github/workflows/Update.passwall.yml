@@ -42,7 +42,7 @@ jobs:
         rm -rf ./pass
         
         sed -i '9i\PKG_VERSION:=4.74-2' luci-app-passwall/Makefile
-        cp -rf luci-app-bypass/root/www/luci-static/bypass/flags/un.svg luci-app-passwall/root/www/luci-static/passwall/flags/
+        cp -rf svg/un.svg luci-app-passwall/root/www/luci-static/passwall/flags/
 
     - name: Apply
       run: |
