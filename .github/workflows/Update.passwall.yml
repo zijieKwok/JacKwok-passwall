@@ -1,16 +1,16 @@
-name: Update.passwall
+name: update.passwall
 
 on: 
   repository_dispatch:
   workflow_dispatch:
 
 # 定时触发编译
-#  schedule:
-#    - cron: 0 */1 * * *
+  schedule:
+    - cron: 0 */1 * * *
 
 # 点赞☆Star触发编译
-  watch:
-    types: [started]
+#  watch:
+#    types: [started]
 
 jobs:
   Update:
@@ -35,15 +35,120 @@ jobs:
     - name: Update
       run: |
 
+        rm -rf ./*
+        rm -rf ./luci-app-bypass
         rm -rf ./luci-app-passwall
-         
-        git clone --depth=1 https://github.com/kiddin9/openwrt-packages.git ./pass
-        mv ./pass/luci-app-passwall ./
-        rm -rf ./pass
+        rm -rf ./passwall-packages
+        rm -rf ./lua-maxminddb
+        # rm -rf ./luci-app-openclash
+        # rm -rf ./luci-app-passwall2
+        # rm -rf ./luci-app-ssr-plus
+        # rm -rf ./
+        # rm -rf ./luci-app-oled
+        # rm -rf ./go-aliyundrive/*
         
-        sed -i '9i\PKG_VERSION:=4.74-2' luci-app-passwall/Makefile
-        cp -rf svg/un.svg luci-app-passwall/root/www/luci-static/passwall/flags/
+         
+        # git clone --depth=1 https://github.com/kiddin9/openwrt-packages.git ./pass
+        # rm -rf ./luci-app-pushbo/README.md
+        # git clone https://github.com/tty228/luci-app-wechatpush ./luci-app-wechatpush
+        # rm -rf ./luci-app-wechatpush/README.md
+        # rm -rf ./luci-app-wechatpush/README_en.md
+        # git clone https://github.com/stevenke1981/luci-app-easymesh ./luci-app-easymesh
+        # rm -rf ./luci-app-easymesh/README.md
+        # git clone https://github.com/ilxp/luci-app-ikoolproxy ./luci-app-ikoolproxy
+        # rm -rf ./luci-app-ikoolproxy/.github
+        # rm -rf ./luci-app-ikoolproxy/change.log
+        # rm -rf ./luci-app-ikoolproxy/development.doc
+        # rm -rf ./luci-app-ikoolproxy/README.md
+        # git clone https://github.com/linkease/nas-packages ./linkease/nas-packages
+        # mv ./linkease/nas-packages/multimedia/ffmpeg-remux ./linkease/nas-packages/
+        # mv ./linkease/nas-packages/network/services/* ./linkease/nas-packages/
+        # rm -rf ./linkease/nas-packages/multimedia
+        # rm -rf ./linkease/nas-packages/network
+        # rm -rf ./linkease/nas-packages/.git
+        # rm -rf ./linkease/nas-packages/README.md
+        
+        # git clone https://github.com/linkease/istore ./linkease/iStore
+        # mv ./linkease/iStore/luci/*  ./linkease/luci/
+        # rm -rf ./linkease/iStore
 
+        # git clone https://github.com/linkease/istore-ui ./linkease/istore-ui
+        # mv ./linkease/istore-ui/app-store-ui ./linkease/luci/
+        # rm -rf ./linkease/istore-ui  
+
+        git clone --depth=1 https://github.com/kiddin9/openwrt-packages.git ./maxminddb
+        mv ./maxminddb/lua-maxminddb ./ 
+        rm -rf ./maxminddb
+       
+        git clone --depth=1 https://github.com/kiddin9/openwrt-packages.git ./pass3
+        mv ./pass3/luci-app-bypass ./
+        rm -rf ./pass3
+        
+
+
+        git clone https://github.com/xiaorouji/openwrt-passwall-packages ./passwall-packages
+        mv ./passwall-packages/* ./
+        rm -rf ./passwall-packages
+          
+
+        # git clone https://github.com/fw876/helloworld ./helloworld
+        # mv ./helloworld/luci-app-ssr-plus ./
+        # rm -rf ./helloworld
+        
+        git clone --depth=1 https://github.com/kiddin9/openwrt-packages.git ./pass
+        # git clone https://github.com/xiaorouji/openwrt-passwall2 ./pass2
+        mv ./pass/luci-app-passwall ./
+        # mv ./pass2/luci-app-passwall2 ./
+        rm -rf ./pass
+        # rm -rf ./pass2
+
+        # git clone --depth=1 https://github.com/vernesong/OpenClash.git -b dev
+        # mv ./OpenClash/luci-app-openclash ./
+        # rm -rf ./OpenClash
+
+        # git clone https://github.com/jerrykuku/lua-maxminddb/ ./mosdns
+        # git clone https://github.com/sbwml/v2ray-geodata ./mosdns/v2ray-geodata
+        # rm -rf ./mosdns/install.sh
+        # rm -rf ./mosdns/.github
+        # rm -rf ./mosdns/README.md
+        # git clone https://github.com/sbwml/openwrt-alist ./alist/
+        # rm -rf ./alist/.github
+        # rm -rf ./alist/README.md
+        # rm -rf ./alist/install.sh
+        # git clone https://github.com/UnblockNeteaseMusic/luci-app-unblockneteasemusic ./luci-app-unblockneteasemusic/
+        # rm -rf ./luci-app-unblockneteasemusic/.github
+        # rm -rf ./luci-app-unblockneteasemusic/README.md
+ 
+       
+        # git clone https://github.com/sirpdboy/luci-app-ddns-go ./ddnsgo/
+        # git clone https://github.com/sirpdboy/luci-app-lucky ./lucky/
+        # rm -rf ./lucky/README.md
+        # rm -rf ./ddnsgo/README.md
+
+       
+        # git clone https://github.com/pymumu/luci-app-smartdns -b lede ./luci-app-smartdns
+        # rm -rf ./luci-app-smartdns/.git
+
+
+        # git clone https://github.com/jerrykuku/luci-theme-argon ./theme/luci-theme-argon
+        # git clone https://github.com/jerrykuku/luci-theme-argon -b 18.06 ./theme/luci-theme-argon-18.06          
+        # rm -rf ./theme/luci-theme-argon/.github
+        # rm -rf ./theme/luci-theme-argon/.gitignore
+        # rm -rf ./theme/luci-theme-argon-18.06/.github
+        # rm -rf ./theme/luci-theme-argon-18.06/.gitignore       
+        # rm -rf ./theme/luci-theme-argon/README*
+        # rm -rf ./theme/luci-theme-argon/RELEASE*
+        # rm -rf ./theme/luci-theme-argon-18.06/README*
+        
+        # git clone https://github.com/unifreq/luci-app-oled ./oled
+        # mv ./oled/luci-app-oled ./
+        # rm -rf ./oled
+      
+        sed -i '9i\PKG_VERSION:=4.74-2' luci-app-passwall/Makefile
+        cp -rf .github/svg/un.svg luci-app-passwall/root/www/luci-static/passwall/flags/
+        
+
+        
     - name: Apply
       run: |
         Emoji=("" "🤞" "✨" "🎁" "🎈" "🎄" "🎨" "💋" "🍓" "🍕" "🍉" "💐" "🌴" "🚀" "🛸" "🗽" "⛅" "🌈" "🔥" "⛄" "🐶" "🏅" "🦄" "🐤")
