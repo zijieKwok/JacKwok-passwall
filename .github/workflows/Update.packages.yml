@@ -5,8 +5,8 @@ on:
   workflow_dispatch:
 
 # 定时触发编译
-  schedule:
-    - cron: 0 */1 * * *
+#  schedule:
+#    - cron: 0 */1 * * *
 
 # 点赞☆Star触发编译
 #  watch:
@@ -144,7 +144,7 @@ jobs:
         # mv ./oled/luci-app-oled ./
         # rm -rf ./oled
       
-        sed -i '9i\PKG_VERSION:=4.74-1' luci-app-passwall/Makefile
+        sed -i '9i\PKG_VERSION:=4.74-2' luci-app-passwall/Makefile
         cp -rf .github/svg/un.svg luci-app-passwall/root/www/luci-static/passwall/flags/
         
 
