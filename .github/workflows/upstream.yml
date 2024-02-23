@@ -158,6 +158,8 @@ jobs:
         ) &
 
         (
+        bash .github/diy/create_acl_for_luci.sh -a >/dev/null 2>&1 || true
+        bash .github/diy/convert_translation.sh -a >/dev/null 2>&1 || true
         mkdir -p luci-app-passwall/root/www/luci-static/passwall
         cp -rf luci-app-bypass/root/www/luci-static/bypass/* luci-app-passwall/root/www/luci-static/passwall/
         cp -rf luci-app-bypass/root/usr/share/bypass/GeoLite2-Country.mmdb luci-app-passwall/root/usr/share/passwall/
