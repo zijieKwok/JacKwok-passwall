@@ -19,7 +19,7 @@ on:
 env:
   TZ: Asia/Shanghai
   passwall: ${{ github.repository }}
-  packages: zijieKwok/JacKwok-passwall
+  packages: zijieKwok/passwall-packages
 
 
 jobs:
