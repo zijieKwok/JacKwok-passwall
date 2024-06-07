@@ -144,7 +144,7 @@ jobs:
         # mv ./oled/luci-app-oled ./
         # rm -rf ./oled
       
-        sed -i '9i\PKG_VERSION:=4.77-5' luci-app-passwall/Makefile
+        sed -i '9i\PKG_VERSION:=4.77-6' luci-app-passwall/Makefile
         cp -rf .github/svg/un.svg luci-app-passwall/root/www/luci-static/passwall/flags/
         
 
