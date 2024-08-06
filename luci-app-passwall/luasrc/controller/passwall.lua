@@ -223,13 +223,14 @@ function check_site(host, port)
 end
 
 function get_ip_geo_info(ip)
-	local result = luci.sys.exec('curl --retry 3 -m 10 -LfsA "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.183 Safari/537.36" https://ipapi.co/' .. ip .. '/json/')
+    local result = luci.sys.exec('curl --retry 3 -m 10 -LfsA "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.183 Safari/537.36" https://ipapi.co/json/')
     local json = require "luci.jsonc"
     local info = json.parse(result)
     
     return {
         flag = string.lower(info.country_code) or "un",
-        country = get_country_name(info.country_code) or "Unknown"
+        country = get_country_name(info.country_code) or "Unknown",
+        ip = info.ip
     }
 end
 
@@ -249,14 +250,11 @@ function get_country_name(country_code)
     return country_names[country_code]
 end
 
--- 获取当前代理状态 与节点ip
 function check_ip()
     local e = {}
     local port = 80
-    local ip = luci.sys.exec('curl --retry 3 -m 10 -LfsA "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.183 Safari/537.36" http://api.ipify.org/')
-	-- 获取IP地理位置信息
     local geo_info = get_ip_geo_info(ip)
-	e.ip = ip
+    e.ip = geo_info.ip
     e.flag = geo_info.flag
     e.country = geo_info.country
     e.baidu = check_site('www.baidu.com', port)
@@ -309,16 +307,19 @@ function connect_status()
 	e.use_time = ""
 	local url = luci.http.formvalue("url")
 	local baidu = string.find(url, "baidu")
-	local enabled = uci:get(appname, "@global[0]", "enabled")
-	local chn_list = uci:get(appname, "@global[0]", "chn_list")
+	local enabled = uci:get(appname, "@global[0]", "enabled") or "0"
+	local chn_list = uci:get(appname, "@global[0]", "chn_list") or "direct"
 	local gfw_list = uci:get(appname, "@global[0]", "use_gfw_list") or "1"
-	local proxy_mode = uci:get(appname, "@global[0]", "tcp_proxy_mode")
-	local socks_port = uci:get(appname, "@global[0]", "tcp_node_socks_port")
-	if enabled ~= 0 then
-		if (chn_list == "proxy" and gfw_list == 0 and proxy_mode ~= "proxy" and baidu ~= nil) or (chn_list == 0 and gfw_list == 0 and proxy_mode == "proxy") then
-			url = "--socks5 127.0.0.1:" .. socks_port .. " " .. url
+	local proxy_mode = uci:get(appname, "@global[0]", "tcp_proxy_mode") or "proxy"
+	local socks_port = uci:get(appname, "@global[0]", "tcp_node_socks_port") or "1070"
+	local local_proxy = uci:get(appname, "@global[0]", "localhost_proxy") or "1"
+	if enabled == "1" and local_proxy == "0" then
+		if (chn_list == "proxy" and gfw_list == "0" and proxy_mode ~= "proxy" and baidu ~= nil) or (chn_list == "0" and gfw_list == "0" and proxy_mode == "proxy") then
+		-- 中国列表+百度 or 全局
+			url = "-x socks5h://127.0.0.1:" .. socks_port .. " " .. url
 		elseif baidu == nil then
-			url = "--socks5 127.0.0.1:" .. socks_port .. " " .. url
+		-- 其他代理模式+百度以外网站
+			url = "-x socks5h://127.0.0.1:" .. socks_port .. " " .. url
 		end
 	end
 	local result = luci.sys.exec('curl --connect-timeout 3 -o /dev/null -I -sk -w "%{http_code}:%{time_appconnect}" ' .. url)
