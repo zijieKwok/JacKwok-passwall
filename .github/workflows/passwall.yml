@@ -1,4 +1,4 @@
-name: Passwall Build
+name: passwall Build
 
 on:
   workflow_dispatch:
@@ -17,25 +17,12 @@ jobs:
           - 23.05.2
         arch:
           - aarch64_cortex-a53
+          - x86_64
 
     steps:
       - uses: actions/checkout@main
         with:
           fetch-depth: 0
-
-      - name: Delete workflow runs
-        uses: Mattraks/delete-workflow-runs@main
-        with:
-          retain_days: 10
-          keep_minimum_runs: 8
-    
-      - name: Remove old Releases
-        uses: dev-drprasad/delete-older-releases@main
-        with:
-          keep_latest: 81
-          delete_tags: true
-        env:
-           GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
 
       - name: Build
         uses: kenzok8/gh-action-sdk@hash
@@ -70,3 +57,17 @@ jobs:
           replacesArtifacts: true
           bodyFile: "release.txt"
           tag: ${{ github.run_number }}-${{ matrix.arch }}
+
+      - name: Delete workflow runs
+        uses: zijieKwok/delete-workflow-runs@main
+        with:
+          retain_days: 10
+          keep_minimum_runs: 2
+    
+      - name: Remove old Releases
+        uses: zijieKwok/delete-older-releases@master
+        with:
+          keep_latest: 60
+          delete_tags: true
+        env:
+           GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
