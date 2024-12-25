@@ -3,7 +3,7 @@
 # Description: Automated compilation testing
 #
 
-name: Auto compilation testing
+name: Auto compilation testing2
 
 on:
   push:
