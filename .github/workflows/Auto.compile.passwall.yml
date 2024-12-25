@@ -14,8 +14,7 @@ on:
 env:
   TZ: Asia/Shanghai
   passwall: ${{ github.repository }}
-  packages: zijieKwok/JacKwok-passwall
-
+  packages: xiaorouji/openwrt-passwall-packages
 
 jobs:
   job_check:
