@@ -16,8 +16,10 @@ OPENWRT_ARCH = nil
 DISTRIB_ARCH = nil
 OPENWRT_BOARD = nil
 
-LOG_FILE = "/tmp/log/" .. appname .. ".log"
 CACHE_PATH = "/tmp/etc/" .. appname .. "_tmp"
+LOG_FILE = "/tmp/log/" .. appname .. ".log"
+TMP_PATH = "/tmp/etc/" .. appname
+TMP_IFACE_PATH = TMP_PATH .. "/iface"
 
 function log(...)
 	local result = os.date("%Y-%m-%d %H:%M:%S: ") .. table.concat({...}, " ")
@@ -26,6 +28,16 @@ function log(...)
 		f:write(result .. "\n")
 		f:close()
 	end
+end
+
+function set_cache_var(key, val)
+	sys.call(string.format('/usr/share/passwall/app.sh set_cache_var %s "%s"', key, val))
+end
+
+function get_cache_var(key)
+	local val = sys.exec(string.format('echo -n $(/usr/share/passwall/app.sh get_cache_var %s)', key))
+	if val == "" then val = nil end
+	return val
 end
 
 function exec_call(cmd)
@@ -63,6 +75,29 @@ function base64Decode(text)
 	end
 end
 
+--提取URL中的域名和端口(no ip)
+function get_domain_port_from_url(url)
+	local scheme, domain, port = string.match(url, "^(https?)://([%w%.%-]+):?(%d*)")
+	if not domain then
+		scheme, domain, port = string.match(url, "^(https?)://(%b[])([^:/]*)/?")
+	end
+	if not domain then return nil, nil end
+	if domain:sub(1, 1) == "[" then domain = domain:sub(2, -2) end
+	port = port ~= "" and tonumber(port) or (scheme == "https" and 443 or 80)
+	if datatypes.ipaddr(domain) or datatypes.ip6addr(domain) then return nil, nil end
+	return domain, port
+end
+
+--解析域名
+function domainToIPv4(domain, dns)
+	local Dns = dns or "223.5.5.5"
+	local IPs = luci.sys.exec('nslookup %s %s | awk \'/^Name:/{getline; if ($1 == "Address:") print $2}\'' % { domain, Dns })
+	for IP in string.gmatch(IPs, "%S+") do
+		if datatypes.ipaddr(IP) and not datatypes.ip6addr(IP) then return IP end
+	end
+	return nil
+end
+
 function curl_base(url, file, args)
 	if not args then args = {} end
 	if file then
@@ -74,8 +109,8 @@ end
 
 function curl_proxy(url, file, args)
 	--使用代理
-	local socks_server = luci.sys.exec("[ -f /tmp/etc/passwall/acl/default/TCP_SOCKS_server ] && echo -n $(cat /tmp/etc/passwall/acl/default/TCP_SOCKS_server) || echo -n ''")
-	if socks_server ~= "" then
+	local socks_server = get_cache_var("GLOBAL_TCP_SOCKS_server")
+	if socks_server and socks_server ~= "" then
 		if not args then args = {} end
 		local tmp_args = clone(args)
 		tmp_args[#tmp_args + 1] = "-x socks5h://" .. socks_server
@@ -88,6 +123,28 @@ function curl_logic(url, file, args)
 	local return_code, result = curl_proxy(url, file, args)
 	if not return_code or return_code ~= 0 then
 		return_code, result = curl_base(url, file, args)
+	end
+	return return_code, result
+end
+
+function curl_direct(url, file, args)
+	--直连访问
+	if not args then args = {} end
+	local tmp_args = clone(args)
+	local domain, port = get_domain_port_from_url(url)
+	if domain then
+		local ip = domainToIPv4(domain)
+		if ip then
+			tmp_args[#tmp_args + 1] = "--resolve " .. domain .. ":" .. port .. ":" .. ip
+		end
+	end
+	return curl_base(url, file, tmp_args)
+end
+
+function curl_auto(url, file, args)
+	local return_code, result = curl_proxy(url, file, args)
+	if not return_code or return_code ~= 0 then
+		return_code, result = curl_direct(url, file, args)
 	end
 	return return_code, result
 end
@@ -162,7 +219,14 @@ end
 
 function is_install(package)
 	if package and #package > 0 then
-		return sys.call(string.format('opkg list-installed | grep "%s" > /dev/null 2>&1', package)) == 0
+		local file_path = "/usr/lib/opkg/info"
+		local file_ext = ".control"
+		local has = sys.call("[ -d " .. file_path .. " ]")
+		if has ~= 0 then
+			file_path = "/lib/apk/packages"
+			file_ext = ".list"
+		end
+		return sys.call(string.format('[ -s "%s/%s%s" ]', file_path, package, file_ext)) == 0
 	end
 	return false
 end
@@ -305,6 +369,26 @@ function get_domain_from_url(url)
 		return domain
 	end
 	return url
+end
+
+function get_node_name(node_id)
+	local e
+	if type(node_id) == "table" then
+		e = node_id
+	else
+		e = uci:get_all(appname, node_id)
+	end
+	if e then
+		if e.type and e.remarks then
+			if e.protocol and (e.protocol == "_balancing" or e.protocol == "_shunt" or e.protocol == "_iface") then
+				local type = e.type
+				if type == "sing-box" then type = "Sing-Box" end
+				local remark = "%s：[%s] " % {type .. " " .. i18n.translatef(e.protocol), e.remarks}
+				return remark
+			end
+		end
+	end
+	return ""
 end
 
 function get_valid_nodes()
@@ -720,6 +804,7 @@ local default_file_tree = {
 	mips    = "mips",
 	mips64  = "mips64",
 	mipsel  = "mipsel",
+	mips64el = "mips64el",
 	armv5   = "arm.*5",
 	armv6   = "arm.*6[^4]*",
 	armv7   = "arm.*7",
@@ -986,7 +1071,11 @@ function to_move(app_name,file)
 end
 
 function get_version()
-	return sys.exec("echo -n $(opkg list-installed luci-app-passwall |awk '{print $3}')")
+	local version = sys.exec("opkg list-installed luci-app-passwall 2>/dev/null | awk '{print $3}'")
+	if not version or #version == 0 then
+		version = sys.exec("apk info -L luci-app-passwall 2>/dev/null | awk 'NR == 1 {print $1}' | cut -d'-' -f4-")
+	end
+	return version or ""
 end
 
 function to_check_self()
@@ -1046,11 +1135,16 @@ function luci_types(id, m, s, type_name, option_prefix)
 				end
 				s.fields[key].write = function(self, section, value)
 					if s.fields["type"]:formvalue(id) == type_name then
-						if self.rewrite_option then
-							m:set(section, self.rewrite_option, value)
+						-- 添加自定义 custom_write 属性，如果有自定义的 custom_write 函数，则使用自定义的 write 逻辑
+						if self.custom_write then
+							self:custom_write(section, value)
 						else
-							if self.option:find(option_prefix) == 1 then
-								m:set(section, self.option:sub(1 + #option_prefix), value)
+							if self.rewrite_option then
+								m:set(section, self.rewrite_option, value)
+							else
+								if self.option:find(option_prefix) == 1 then
+									m:set(section, self.option:sub(1 + #option_prefix), value)
+								end
 							end
 						end
 					end
@@ -1078,4 +1172,25 @@ function luci_types(id, m, s, type_name, option_prefix)
 			end
 		end
 	end
+end
+
+function get_std_domain(domain)
+	domain = trim(domain)
+	if domain == "" or domain:find("#") then return "" end
+	-- 删除首尾所有的 .
+	domain = domain:gsub("^[%.]+", ""):gsub("[%.]+$", "")
+	-- 如果 domain 包含 '*'，则分割并删除包含 '*' 的部分及其前面的部分
+	if domain:find("%*") then
+		local parts = {}
+		for part in domain:gmatch("[^%.]+") do
+			table.insert(parts, part)
+		end
+		for i = #parts, 1, -1 do
+			if parts[i]:find("%*") then
+				-- 删除包含 '*' 的部分及其前面的部分
+				return parts[i + 1] and parts[i + 1] .. "." .. table.concat(parts, ".", i + 2) or ""
+			end
+		end
+	end
+	return domain
 end

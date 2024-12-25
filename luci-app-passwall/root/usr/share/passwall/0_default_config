@@ -2,15 +2,15 @@
 config global
 	option enabled '0'
 	option socks_enabled '0'
-	option tcp_node 'nil'
-	option udp_node 'nil'
 	option tcp_node_socks_port '1070'
 	option filter_proxy_ipv6 '1'
 	option dns_shunt 'chinadns-ng'
 	option dns_mode 'tcp'
 	option remote_dns '1.1.1.1'
+	list smartdns_remote_dns 'https://1.1.1.1/dns-query'
 	option use_default_dns 'direct'
 	option chinadns_ng_default_tag 'none'
+	option dns_redirect '1'
 	option use_direct_list '1'
 	option use_proxy_list '1'
 	option use_block_list '1'
@@ -30,7 +30,6 @@ config global_haproxy
 	option balancing_enable '0'
 
 config global_delay
-	option auto_on '0'
 	option start_daemon '1'
 	option start_delay '60'
 
@@ -100,13 +99,12 @@ config nodes 'myshunt'
 	option Streaming '_default'
 	option Proxy '_default'
 	option Direct '_direct'
-	option default_node 'nil'
+	option default_node '_direct'
 	option domainStrategy 'IPOnDemand'
 
 config shunt_rules 'DirectGame'
 	option remarks 'DirectGame'
-	option domain_list 'api.steampowered.com
-regexp:\.cm.steampowered.com$
+	option domain_list 'regexp:\.cm.steampowered.com$
 regexp:\.steamserver.net$
 geosite:category-games@cn'
 	option ip_list '103.10.124.0/24
@@ -163,7 +161,8 @@ domain:store.steampowered.com'
 
 config shunt_rules 'AIGC'
 	option remarks 'AIGC'
-	option domain_list 'geosite:category-ai-chat-!cn'
+	option domain_list 'geosite:category-ai-chat-!cn
+domain:apple-relay.apple.com'
 
 config shunt_rules 'Streaming'
 	option remarks 'Streaming'
