@@ -14,7 +14,7 @@ on:
 env:
   TZ: Asia/Shanghai
   passwall: ${{ github.repository }}
-  packages: zijieKwok/passwall-packages
+  packages: https://github.com/kiddin9/kwrt-packages
 
 
 jobs:
