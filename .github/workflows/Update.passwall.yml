@@ -80,7 +80,7 @@ jobs:
         # mv ./maxminddb/lua-maxminddb ./ 
         # rm -rf ./maxminddb
        
-        git clone --depth=1 https://github.com/kiddin9/openwrt-packages.git ./pass3
+        git clone --depth=1 https://github.com/kiddin9/kwrt-packages.git ./pass3
         mv ./pass3/luci-app-bypass ./
         rm -rf ./pass3
         
@@ -95,7 +95,7 @@ jobs:
         # mv ./helloworld/luci-app-ssr-plus ./
         # rm -rf ./helloworld
         
-        git clone --depth=1 https://github.com/kiddin9/openwrt-packages.git ./pass
+        git clone --depth=1 https://github.com/kiddin9/kwrt-packages.git ./pass
         # git clone https://github.com/xiaorouji/openwrt-passwall2 ./pass2
         mv ./pass/luci-app-passwall ./
         # mv ./pass2/luci-app-passwall2 ./
