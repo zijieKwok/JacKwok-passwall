@@ -14,8 +14,7 @@ on:
 env:
   TZ: Asia/Shanghai
   passwall: ${{ github.repository }}
-  packages: xiaorouji/openwrt-passwall-packages
-
+  packages: ${{ github.repository }}
 jobs:
   job_check:
     name: Check Version
