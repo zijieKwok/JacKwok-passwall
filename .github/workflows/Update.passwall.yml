@@ -40,15 +40,15 @@ jobs:
         
         
          
-        git clone --depth=1 https://github.com/kiddin9/kwrt-packages.git ./pass
-        mv ./pass/luci-app-passwall ./
-        rm -rf ./pass
+        # git clone --depth=1 https://github.com/kiddin9/kwrt-packages.git ./pass
+        # mv ./pass/luci-app-passwall ./
+        # rm -rf ./pass
         
 
         
  
        
-        cp -rf .github/svg/un.svg luci-app-passwall/root/www/luci-static/passwall/flags/
+        # cp -rf .github/svg/un.svg luci-app-passwall/root/www/luci-static/passwall/flags/
         
 
         
