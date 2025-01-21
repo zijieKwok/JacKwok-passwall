@@ -13,8 +13,8 @@ on:
         default: 'false'
 env:
   TZ: Asia/Shanghai
-  passwall: zijieKwok/vpnipk
-  packages: xiaorouji/openwrt-passwall-packages
+  passwall: zijieKwok/JacKwok-passwall
+  packages: zijieKwok/JacKwok-passwall
 
 
 jobs:
