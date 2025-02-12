@@ -38,7 +38,7 @@ LUCI_DEPENDS:=+coreutils +coreutils-base64 +coreutils-nohup +curl \
 	+libuci-lua +lua +luci-compat +luci-lib-jsonc \
 	+microsocks +resolveip +tcping \
 	+ipt2socks \
-	+PACKAGE_$(PKG_NAME)_INCLUDE_Geoview \
+	+PACKAGE_$(PKG_NAME)_INCLUDE_Geoview:geoview \
 	+PACKAGE_$(PKG_NAME)_INCLUDE_Haproxy:haproxy \
 	+PACKAGE_$(PKG_NAME)_INCLUDE_Hysteria:hysteria \
 	+PACKAGE_$(PKG_NAME)_INCLUDE_NaiveProxy:naiveproxy \
