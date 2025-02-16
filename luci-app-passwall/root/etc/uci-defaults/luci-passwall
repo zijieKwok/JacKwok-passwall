@@ -1,6 +1,5 @@
 #!/bin/sh
 [ ! -f "/usr/share/ucitrack/luci-app-passwall.json" ] && {
-    mkdir -p /usr/share/ucitrack
     cat > /usr/share/ucitrack/luci-app-passwall.json << EEOF
 {
     "config": "passwall",
